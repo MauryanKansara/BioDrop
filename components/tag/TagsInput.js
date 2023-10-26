@@ -1,37 +1,37 @@
-import { useRef } from "react";
 import XMarkIcon from "@heroicons/react/20/solid/XMarkIcon";
 import Input from "../form/Input";
 
-export default function TagsInput({ tags, onTagAdd, onTagRemove }) {
-  const inputRef = useRef(null);
+export default function TagsInput({ tags, onTagAdd, onTagRemove, tagInputRef }) {
+
 
   //key code
-  const { comma, backspace } = {
+  const { comma, backspace, enter } = {
     comma: 188,
     backspace: 8,
+    enter: 13,
   };
 
   const handleKeyUp = (e) => {
-    const inputValue = inputRef.current.value;
-    if (e.keyCode === comma || inputValue.endsWith(",")) {
+    const inputValue = tagInputRef.current.value;
+    if (e.keyCode === comma || inputValue.endsWith(",") || e.keyCode === enter) {
       const newTag = inputValue.trim().replace(/,/g, "");
       if (!newTag) {
         return;
       }
       onTagAdd(newTag);
-      inputRef.current.value = "";
+      tagInputRef.current.value = "";
     }
   };
 
   const handleKeyDown = (e) => {
     if (
       e.keyCode === backspace &&
-      inputRef.current?.value === "" &&
+      tagInputRef.current?.value === "" &&
       tags.length > 0
     ) {
       const removedTag = tags.pop();
       onTagRemove(removedTag);
-      inputRef.current.value = removedTag;
+      tagInputRef.current.value = removedTag;
     }
   };
 
@@ -67,7 +67,7 @@ export default function TagsInput({ tags, onTagAdd, onTagRemove }) {
           <Input
             name="tags"
             className="w-full text-sm rounded-md font-mono outline-none dark:bg-primary-high focus:ring-0 focus:border-tertiary-medium focus:outline-0 p-1 hover:border-tertiary-medium"
-            ref={inputRef}
+            ref={tagInputRef}
             type="text"
             placeholder="type tag..."
             onKeyUp={handleKeyUp}
